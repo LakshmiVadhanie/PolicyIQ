@@ -56,14 +56,14 @@ def quality_gate_node(state: PolicyIQState) -> PolicyIQState:
         final_response = answer
         fallback_triggered = False
         print(
-            f"[QualityGate] ✅ PASSED — composite={scores.composite:.3f} "
+            f"[QualityGate]  PASSED — composite={scores.composite:.3f} "
             f"(threshold={settings.ragas_composite_threshold})"
         )
     else:
         final_response = FALLBACK_RESPONSE
         fallback_triggered = True
         print(
-            f"[QualityGate] ❌ BLOCKED — composite={scores.composite:.3f} "
+            f"[QualityGate]  BLOCKED — composite={scores.composite:.3f} "
             f"(threshold={settings.ragas_composite_threshold}). Fallback triggered."
         )
 

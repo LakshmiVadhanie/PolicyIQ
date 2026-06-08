@@ -10,7 +10,7 @@ from app.main import app
 client = TestClient(app)
 
 
-# ── Health Tests ───────────────────────────────────────────────────────────────
+#  Health Tests 
 
 class TestHealthEndpoints:
     def test_root_endpoint(self):
@@ -32,7 +32,7 @@ class TestHealthEndpoints:
         assert "timestamp" in data
 
 
-# ── Chat Tests ─────────────────────────────────────────────────────────────────
+#  Chat Tests 
 
 class TestChatEndpoint:
     def test_policy_query(self):
@@ -126,7 +126,7 @@ class TestChatEndpoint:
         assert data["session_id"] == "my-unique-session-xyz"
 
 
-# ── Webhook Tests ──────────────────────────────────────────────────────────────
+#  Webhook Tests 
 
 class TestWebhookEndpoint:
     def test_basic_webhook(self):
@@ -176,7 +176,7 @@ class TestWebhookEndpoint:
         assert response.status_code == 200
 
 
-# ── Metrics Tests ──────────────────────────────────────────────────────────────
+#  Metrics Tests 
 
 class TestMetricsEndpoint:
     def test_metrics_endpoint(self):

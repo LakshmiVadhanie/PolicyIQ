@@ -76,17 +76,17 @@ jobs:
             --format='value(status.url)' \
             --project=${{ secrets.GCP_PROJECT_ID }})
           echo "url=$URL" >> $GITHUB_OUTPUT
-          echo "🚀 Deployed to: $URL"
+          echo " Deployed to: $URL"
 
       - name: Smoke test production
         run: |
           sleep 10
           curl -f ${{ steps.get-url.outputs.url }}/health
-          echo "✅ Production health check passed"
+          echo " Production health check passed"
 
       - name: Post deployment summary
         run: |
-          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "##  Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| **URL** | ${{ steps.get-url.outputs.url }} |" >> $GITHUB_STEP_SUMMARY

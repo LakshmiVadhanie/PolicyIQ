@@ -11,7 +11,7 @@ from app.agents.state import PolicyIQState
 from app.config import settings
 
 
-# ── Premium Estimation Tools ───────────────────────────────────────────────────
+#  Premium Estimation Tools 
 
 @tool
 def estimate_auto_premium(
@@ -203,7 +203,7 @@ def estimate_health_premium(
 PREMIUM_TOOLS = [estimate_auto_premium, estimate_home_premium, estimate_health_premium]
 
 
-# ── Agent ──────────────────────────────────────────────────────────────────────
+#  Agent 
 
 PREMIUM_AGENT_SYSTEM_PROMPT = """You are PolicyIQ's Premium Estimation Specialist — an expert insurance actuary.
 
@@ -235,9 +235,9 @@ class _MockPremiumLLM:
             "• Standard coverage: ~$96/month *(recommended)*\n"
             "• Comprehensive coverage: ~$144/month\n\n"
             "**Key factors that affect your premium:**\n"
-            "✅ Clean driving record → saves ~15%\n"
-            "✅ Low annual mileage (<8,000 mi) → saves ~10%\n"
-            "✅ Anti-theft device → saves ~5%\n\n"
+            " Clean driving record → saves ~15%\n"
+            " Low annual mileage (<8,000 mi) → saves ~10%\n"
+            " Anti-theft device → saves ~5%\n\n"
             "**Home Insurance Estimate** (for a $400,000 home):\n"
             "• Standard coverage: ~$167/month\n"
             "• Premium coverage: ~$233/month\n\n"

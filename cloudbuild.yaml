@@ -1,5 +1,5 @@
 steps:
-  # ── Step 1: Run Unit Tests ─────────────────────────────────────────────────
+  #  Step 1: Run Unit Tests 
   - name: "python:3.11-slim"
     id: "unit-tests"
     entrypoint: "bash"
@@ -11,7 +11,7 @@ steps:
         python -m pytest tests/ -v --cov=app --cov-report=term-missing \
         --ignore=tests/test_evaluation.py -x
 
-  # ── Step 2: RAGAS Quality Gate Evaluation ─────────────────────────────────
+  #  Step 2: RAGAS Quality Gate Evaluation 
   - name: "python:3.11-slim"
     id: "ragas-gate"
     entrypoint: "bash"
@@ -24,7 +24,7 @@ steps:
         --tb=short
     waitFor: ["unit-tests"]
 
-  # ── Step 3: Build Docker Image ─────────────────────────────────────────────
+  #  Step 3: Build Docker Image 
   - name: "gcr.io/cloud-builders/docker"
     id: "build-image"
     args:
@@ -38,7 +38,7 @@ steps:
       - "."
     waitFor: ["ragas-gate"]
 
-  # ── Step 4: Push to Artifact Registry ─────────────────────────────────────
+  #  Step 4: Push to Artifact Registry 
   - name: "gcr.io/cloud-builders/docker"
     id: "push-image"
     args:
@@ -47,7 +47,7 @@ steps:
       - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/policyiq"
     waitFor: ["build-image"]
 
-  # ── Step 5: Deploy to Cloud Run ────────────────────────────────────────────
+  #  Step 5: Deploy to Cloud Run 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     id: "deploy-cloudrun"
     entrypoint: "gcloud"

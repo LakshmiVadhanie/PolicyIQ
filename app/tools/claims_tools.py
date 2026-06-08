@@ -8,7 +8,7 @@ from datetime import date, datetime
 from langchain_core.tools import tool
 
 
-# ── Mock Claims Data ───────────────────────────────────────────────────────────
+#  Mock Claims Data 
 
 MOCK_CLAIMS = {
     "CLM-2024-001": {
@@ -69,7 +69,7 @@ CLAIM_SEVERITY = {
 }
 
 
-# ── Tools ──────────────────────────────────────────────────────────────────────
+#  Tools 
 
 @tool
 def get_claim_status(claim_id: str) -> dict:

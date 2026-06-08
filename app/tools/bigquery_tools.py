@@ -13,7 +13,7 @@ from langchain_core.tools import tool
 from app.config import settings
 
 
-# ── BigQuery Client (lazy init) ────────────────────────────────────────────────
+#  BigQuery Client (lazy init) 
 
 _bq_client = None
 
@@ -27,13 +27,13 @@ def _get_bq_client():
     return _bq_client
 
 
-# ── Mock Storage ───────────────────────────────────────────────────────────────
+#  Mock Storage 
 
 _mock_interactions: list[dict] = []
 _mock_metrics: list[dict] = []
 
 
-# ── Write Helpers ──────────────────────────────────────────────────────────────
+#  Write Helpers 
 
 def log_interaction(
     session_id: str,
@@ -131,7 +131,7 @@ def log_agent_routing(
     client.insert_rows_json(table_id, [row])
 
 
-# ── Read / Analytics ───────────────────────────────────────────────────────────
+#  Read / Analytics 
 
 def get_aggregate_metrics() -> dict:
     """Fetch aggregate evaluation metrics from BigQuery (or mock)."""

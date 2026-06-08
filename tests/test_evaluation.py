@@ -124,13 +124,13 @@ class TestRAGASQualityGate:
 
     def test_average_composite_score(self, ragas_scores):
         """
-        ✅ RAGAS GATE: Average composite score must meet threshold.
+         RAGAS GATE: Average composite score must meet threshold.
         This is the primary CI gate — failure blocks deployment.
         """
         avg = sum(s.composite for s in ragas_scores) / len(ragas_scores)
-        print(f"\n🎯 RAGAS Gate — Average composite: {avg:.3f} (threshold: {CI_COMPOSITE_THRESHOLD})")
+        print(f"\n RAGAS Gate — Average composite: {avg:.3f} (threshold: {CI_COMPOSITE_THRESHOLD})")
         assert avg >= CI_COMPOSITE_THRESHOLD, (
-            f"❌ RAGAS GATE FAILED: Average composite score {avg:.3f} "
+            f" RAGAS GATE FAILED: Average composite score {avg:.3f} "
             f"is below production threshold {CI_COMPOSITE_THRESHOLD}. "
             f"Review agent response quality before deploying."
         )

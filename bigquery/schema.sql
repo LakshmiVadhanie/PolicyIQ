@@ -6,7 +6,7 @@
 #   bq query --use_legacy_sql=false < bigquery/schema.sql
 # ============================================================
 
--- ── Interactions Table ─────────────────────────────────────────────────────
+--  Interactions Table 
 CREATE TABLE IF NOT EXISTS `policyiq_analytics.interactions`
 (
     request_id        STRING    NOT NULL,
@@ -26,7 +26,7 @@ OPTIONS (
     partition_expiration_days = 365
 );
 
--- ── Evaluation Metrics Table ───────────────────────────────────────────────
+--  Evaluation Metrics Table 
 CREATE TABLE IF NOT EXISTS `policyiq_analytics.evaluation_metrics`
 (
     request_id        STRING    NOT NULL,
@@ -44,7 +44,7 @@ OPTIONS (
     description = 'RAGAS evaluation metric scores per request'
 );
 
--- ── Agent Routing Log Table ────────────────────────────────────────────────
+--  Agent Routing Log Table 
 CREATE TABLE IF NOT EXISTS `policyiq_analytics.agent_routing_log`
 (
     request_id   STRING    NOT NULL,
@@ -61,7 +61,7 @@ OPTIONS (
     description = 'LangGraph agent routing decisions audit log'
 );
 
--- ── Useful Analytics Views ─────────────────────────────────────────────────
+--  Useful Analytics Views 
 CREATE OR REPLACE VIEW `policyiq_analytics.daily_quality_summary` AS
 SELECT
     DATE(timestamp)                                     AS date,

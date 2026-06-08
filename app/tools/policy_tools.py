@@ -10,7 +10,7 @@ from typing import Optional
 from langchain_core.tools import tool
 
 
-# ── Mock Policy Data ───────────────────────────────────────────────────────────
+#  Mock Policy Data 
 
 MOCK_POLICIES = {
     "POL-001": {
@@ -58,7 +58,7 @@ MOCK_POLICIES = {
 }
 
 
-# ── Tools ──────────────────────────────────────────────────────────────────────
+#  Tools 
 
 @tool
 def lookup_policy(policy_number: str) -> dict:

@@ -10,7 +10,7 @@ import uuid
 from datetime import datetime
 
 
-# ── Enums ─────────────────────────────────────────────────────────────────────
+#  Enums 
 
 class IntentType(str, Enum):
     POLICY_LOOKUP = "PolicyLookup"
@@ -26,7 +26,7 @@ class AgentName(str, Enum):
     PREMIUM_AGENT = "premium_agent"
 
 
-# ── Chat Request / Response ────────────────────────────────────────────────────
+#  Chat Request / Response 
 
 class ChatRequest(BaseModel):
     session_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -62,7 +62,7 @@ class ChatResponse(BaseModel):
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 
-# ── Dialogflow CX Webhook ──────────────────────────────────────────────────────
+#  Dialogflow CX Webhook 
 
 class DialogflowQueryInput(BaseModel):
     text: Optional[dict] = None
@@ -101,7 +101,7 @@ class DialogflowWebhookResponse(BaseModel):
     page_info: Optional[dict] = None
 
 
-# ── Health / Metrics ───────────────────────────────────────────────────────────
+#  Health / Metrics 
 
 class HealthResponse(BaseModel):
     status: str

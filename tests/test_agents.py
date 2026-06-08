@@ -11,7 +11,7 @@ from app.agents.premium_agent import premium_agent_node
 from app.evaluation.quality_gate import quality_gate_node
 
 
-# ── Supervisor Tests ───────────────────────────────────────────────────────────
+#  Supervisor Tests 
 
 class TestSupervisorNode:
     def test_routes_policy_query(self, base_state):
@@ -70,7 +70,7 @@ class TestSupervisorNode:
         assert route_to_agent(state) == "policy_agent"
 
 
-# ── Policy Agent Tests ─────────────────────────────────────────────────────────
+#  Policy Agent Tests 
 
 class TestPolicyAgent:
     def test_returns_response(self, base_state):
@@ -104,7 +104,7 @@ class TestPolicyAgent:
         assert 0.0 <= result["confidence"] <= 1.0
 
 
-# ── Claims Agent Tests ─────────────────────────────────────────────────────────
+#  Claims Agent Tests 
 
 class TestClaimsAgent:
     def test_returns_response(self, base_state):
@@ -130,7 +130,7 @@ class TestClaimsAgent:
         assert result["confidence"] > 0.0
 
 
-# ── Premium Agent Tests ────────────────────────────────────────────────────────
+#  Premium Agent Tests 
 
 class TestPremiumAgent:
     def test_returns_estimate(self, base_state):
@@ -145,7 +145,7 @@ class TestPremiumAgent:
         assert result["confidence"] > 0.0
 
 
-# ── Quality Gate Tests ─────────────────────────────────────────────────────────
+#  Quality Gate Tests 
 
 class TestQualityGate:
     def test_passes_good_response(self, base_state):

@@ -45,7 +45,7 @@ class _MockClaimsLLM:
         if "clm-" in query.lower():
             response_text = (
                 "I've looked up your claim CLM-2024-002 and here's the current status:\n\n"
-                "**Claim Status: Under Review** 🔍\n\n"
+                "**Claim Status: Under Review** \n\n"
                 "Your water damage claim for $35,000 is currently being reviewed by adjuster Linda Torres. "
                 "To expedite processing, please submit the following outstanding documents:\n"
                 "• Contractor estimate\n"

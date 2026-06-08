@@ -82,7 +82,7 @@ jobs:
         run: |
           echo "Running RAGAS quality gate evaluation..."
           python -m pytest tests/test_evaluation.py -v --tb=short
-          echo "✅ RAGAS quality gate passed"
+          echo " RAGAS quality gate passed"
 
   integration-check:
     name: Integration Check

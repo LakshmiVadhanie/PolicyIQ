@@ -19,43 +19,43 @@
 
 ```
 User Query
-    │
-    ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   FastAPI (Cloud Run)                        │
-│  POST /chat  ◄────── Dialogflow CX Webhook (/webhook)       │
-└─────────────────────────────────────────────────────────────┘
-    │
-    ▼
-┌─────────────────────────────────────────────────────────────┐
-│               LangGraph StateGraph Pipeline                  │
-│                                                              │
-│   ┌──────────┐     ┌─────────────┐                          │
-│   │Supervisor│────►│ policy_agent│ (PolicyLookup)           │
-│   │  (Gemini)│     ├─────────────┤                          │
-│   │          │────►│ claims_agent│ (ClaimsTriage)           │
-│   │          │     ├─────────────┤                          │
-│   │          │────►│premium_agent│ (PremiumEstimation)      │
-│   └──────────┘     └──────┬──────┘                          │
-│         ▲                  │ confidence check                │
-│         └──────────────────┘ (loop if < threshold)          │
-│                             │                                │
-│                    ┌────────▼────────┐                       │
-│                    │  Quality Gate   │ ← RAGAS evaluation    │
-│                    │  (RAGAS Gate)   │                       │
-│                    └────────┬────────┘                       │
-└─────────────────────────────┼───────────────────────────────┘
-                               │
-                    ┌──────────▼──────────┐
-                    │   Final Response     │
-                    └──────────┬──────────┘
-                               │
-                    ┌──────────▼──────────┐
-                    │  BigQuery Analytics  │
-                    │  · interactions      │
-                    │  · eval_metrics      │
-                    │  · routing_log       │
-                    └─────────────────────┘
+    
+    
+
+                   FastAPI (Cloud Run)                        
+  POST /chat   Dialogflow CX Webhook (/webhook)       
+
+    
+    
+
+               LangGraph StateGraph Pipeline                  
+                                                              
+                                  
+   Supervisor policy_agent (PolicyLookup)           
+     (Gemini)                               
+              claims_agent (ClaimsTriage)           
+                                            
+             premium_agent (PremiumEstimation)      
+                                  
+                            confidence check                
+          (loop if < threshold)          
+                                                             
+                                           
+                      Quality Gate    ← RAGAS evaluation    
+                      (RAGAS Gate)                          
+                                           
+
+                               
+                    
+                       Final Response     
+                    
+                               
+                    
+                      BigQuery Analytics  
+                      · interactions      
+                      · eval_metrics      
+                      · routing_log       
+                    
 ```
 
 ## Key Features
@@ -73,19 +73,19 @@ User Query
 
 ## Agents
 
-### 🧭 Supervisor Agent
+###  Supervisor Agent
 Routes queries to specialist agents based on intent detection. Uses Gemini to classify queries into `PolicyLookup`, `ClaimsTriage`, or `PremiumEstimation`. Includes a confidence-check loop — if confidence falls below threshold, re-routes with additional context.
 
-### 📋 Policy Agent
+###  Policy Agent
 Handles coverage lookups, policy details, renewal information, and coverage verification. Bound to policy database tools with real-time lookup capability.
 
-### 🚨 Claims Agent
+###  Claims Agent
 Manages claim status checks, new claim triage (severity classification + SLA assignment), and claims history retrieval. Responds with empathy and clear next steps.
 
-### 💰 Premium Agent
+###  Premium Agent
 Provides actuarial premium estimates for auto, home, and health insurance. Explains pricing factors and discount opportunities.
 
-### 🛡️ Quality Gate
+###  Quality Gate
 Every response passes through a RAGAS evaluation gate before reaching the user. Responses scoring below `composite >= 0.70` are replaced with a safe fallback and flagged for review.
 
 ## Tech Stack
@@ -227,48 +227,48 @@ SELECT * FROM `policyiq_analytics.intent_distribution` ORDER BY date DESC;
 
 ```
 PolicyIQ/
-├── app/
-│   ├── main.py                    # FastAPI entrypoint
-│   ├── config.py                  # Settings (pydantic-settings)
-│   ├── agents/
-│   │   ├── state.py               # LangGraph TypedDict state
-│   │   ├── graph.py               # StateGraph pipeline definition
-│   │   ├── supervisor.py          # Intent router (Gemini)
-│   │   ├── policy_agent.py        # Policy lookup specialist
-│   │   ├── claims_agent.py        # Claims triage specialist
-│   │   └── premium_agent.py       # Premium estimation specialist
-│   ├── api/
-│   │   ├── models.py              # Pydantic request/response schemas
-│   │   └── routes/
-│   │       ├── chat.py            # POST /chat, GET /metrics
-│   │       ├── webhook.py         # POST /webhook (Dialogflow CX)
-│   │       └── health.py          # GET /health, GET /
-│   ├── evaluation/
-│   │   ├── ragas_evaluator.py     # RAGAS metric computation
-│   │   └── quality_gate.py        # Quality gate LangGraph node
-│   ├── tools/
-│   │   ├── policy_tools.py        # Policy database tools
-│   │   ├── claims_tools.py        # Claims management tools
-│   │   └── bigquery_tools.py      # BQ read/write helpers
-│   └── analytics/
-│       └── logger.py              # Structured logging
-├── tests/
-│   ├── conftest.py                # Shared fixtures
-│   ├── test_agents.py             # Agent unit tests
-│   ├── test_api.py                # API endpoint tests
-│   ├── test_evaluation.py         # RAGAS gate tests (CI gate)
-│   └── golden_dataset.json        # 8 golden Q&A examples
-├── bigquery/
-│   └── schema.sql                 # BigQuery DDL
-├── dialogflow/
-│   └── agent_config.json          # Dialogflow CX agent config
-├── .github/workflows/
-│   ├── ci.yml                     # CI: lint → test → RAGAS gate
-│   └── deploy.yml                 # CD: build → push → Cloud Run
-├── Dockerfile                     # Multi-stage production image
-├── docker-compose.yml             # Local development
-├── cloudbuild.yaml                # GCP Cloud Build pipeline
-└── requirements.txt
+ app/
+    main.py                    # FastAPI entrypoint
+    config.py                  # Settings (pydantic-settings)
+    agents/
+       state.py               # LangGraph TypedDict state
+       graph.py               # StateGraph pipeline definition
+       supervisor.py          # Intent router (Gemini)
+       policy_agent.py        # Policy lookup specialist
+       claims_agent.py        # Claims triage specialist
+       premium_agent.py       # Premium estimation specialist
+    api/
+       models.py              # Pydantic request/response schemas
+       routes/
+           chat.py            # POST /chat, GET /metrics
+           webhook.py         # POST /webhook (Dialogflow CX)
+           health.py          # GET /health, GET /
+    evaluation/
+       ragas_evaluator.py     # RAGAS metric computation
+       quality_gate.py        # Quality gate LangGraph node
+    tools/
+       policy_tools.py        # Policy database tools
+       claims_tools.py        # Claims management tools
+       bigquery_tools.py      # BQ read/write helpers
+    analytics/
+        logger.py              # Structured logging
+ tests/
+    conftest.py                # Shared fixtures
+    test_agents.py             # Agent unit tests
+    test_api.py                # API endpoint tests
+    test_evaluation.py         # RAGAS gate tests (CI gate)
+    golden_dataset.json        # 8 golden Q&A examples
+ bigquery/
+    schema.sql                 # BigQuery DDL
+ dialogflow/
+    agent_config.json          # Dialogflow CX agent config
+ .github/workflows/
+    ci.yml                     # CI: lint → test → RAGAS gate
+    deploy.yml                 # CD: build → push → Cloud Run
+ Dockerfile                     # Multi-stage production image
+ docker-compose.yml             # Local development
+ cloudbuild.yaml                # GCP Cloud Build pipeline
+ requirements.txt
 ```
 
 ## Performance

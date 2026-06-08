@@ -19,7 +19,7 @@ from fastapi.responses import JSONResponse
 from app.api.routes import health, chat, webhook
 from app.config import settings
 
-# ── Structured logging setup ───────────────────────────────────────────────────
+#  Structured logging setup 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 structlog.configure(
@@ -37,7 +37,7 @@ structlog.configure(
 logger = structlog.get_logger(__name__)
 
 
-# ── Lifespan ───────────────────────────────────────────────────────────────────
+#  Lifespan 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -57,7 +57,7 @@ async def lifespan(app: FastAPI):
     logger.info("policyiq_shutting_down")
 
 
-# ── FastAPI App ────────────────────────────────────────────────────────────────
+#  FastAPI App 
 
 app = FastAPI(
     title="PolicyIQ",
@@ -73,7 +73,7 @@ app = FastAPI(
 )
 
 
-# ── CORS Middleware ────────────────────────────────────────────────────────────
+#  CORS Middleware 
 
 app.add_middleware(
     CORSMiddleware,
@@ -84,7 +84,7 @@ app.add_middleware(
 )
 
 
-# ── Request Logging Middleware ─────────────────────────────────────────────────
+#  Request Logging Middleware 
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next) -> Response:
@@ -117,7 +117,7 @@ async def log_requests(request: Request, call_next) -> Response:
     return response
 
 
-# ── Exception Handler ──────────────────────────────────────────────────────────
+#  Exception Handler 
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
@@ -128,7 +128,7 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
-# ── Register Routes ────────────────────────────────────────────────────────────
+#  Register Routes 
 
 app.include_router(health.router)
 app.include_router(chat.router)

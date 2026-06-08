@@ -12,7 +12,7 @@ from app.config import settings
 from app.tools.bigquery_tools import log_agent_routing
 
 
-# ── System Prompt ──────────────────────────────────────────────────────────────
+#  System Prompt 
 
 SUPERVISOR_SYSTEM_PROMPT = """You are the PolicyIQ Supervisor Agent — an expert insurance query router.
 
@@ -52,7 +52,7 @@ def _get_llm():
     )
 
 
-# ── Mock LLM for dev ───────────────────────────────────────────────────────────
+#  Mock LLM for dev 
 
 class _MockSupervisorLLM:
     """Mock supervisor that does keyword-based intent classification."""
@@ -100,7 +100,7 @@ class _MockSupervisorLLM:
         return MockResponse()
 
 
-# ── Supervisor Node ────────────────────────────────────────────────────────────
+#  Supervisor Node 
 
 def supervisor_node(state: PolicyIQState) -> PolicyIQState:
     """

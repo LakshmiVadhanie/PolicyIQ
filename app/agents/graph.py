@@ -23,7 +23,7 @@ from app.config import settings
 from app.tools.bigquery_tools import log_interaction
 
 
-# ── Confidence Router ──────────────────────────────────────────────────────────
+#  Confidence Router 
 
 def check_confidence(state: PolicyIQState) -> Literal["quality_gate", "supervisor"]:
     """
@@ -48,7 +48,7 @@ def increment_iteration(state: PolicyIQState) -> PolicyIQState:
     return {**state, "iteration": state.get("iteration", 0) + 1}
 
 
-# ── Graph Builder ──────────────────────────────────────────────────────────────
+#  Graph Builder 
 
 def build_graph() -> StateGraph:
     """
@@ -56,22 +56,22 @@ def build_graph() -> StateGraph:
 
     Graph structure:
         START
-          │
-          ▼
-      supervisor ◄──────────────────────────────┐
-          │ route_to_agent()                      │ (low confidence + iterations left)
-          ├──► policy_agent ─► check_confidence ──┤
-          ├──► claims_agent ─► check_confidence ──┤
-          └──► premium_agent ► check_confidence ──┘
-                                                  │ (confidence OK or max iterations)
-                                                  ▼
+          
+          
+      supervisor 
+           route_to_agent()                       (low confidence + iterations left)
+           policy_agent  check_confidence 
+           claims_agent  check_confidence 
+           premium_agent  check_confidence 
+                                                   (confidence OK or max iterations)
+                                                  
                                            quality_gate
-                                                  │
+                                                  
                                                  END
     """
     graph = StateGraph(PolicyIQState)
 
-    # ── Add nodes ──────────────────────────────────────────
+    #  Add nodes 
     graph.add_node("supervisor", supervisor_node)
     graph.add_node("policy_agent", policy_agent_node)
     graph.add_node("claims_agent", claims_agent_node)
@@ -79,10 +79,10 @@ def build_graph() -> StateGraph:
     graph.add_node("quality_gate", quality_gate_node)
     graph.add_node("increment_iteration", increment_iteration)
 
-    # ── Entry point ────────────────────────────────────────
+    #  Entry point 
     graph.set_entry_point("supervisor")
 
-    # ── Supervisor → specialist routing ────────────────────
+    #  Supervisor → specialist routing 
     graph.add_conditional_edges(
         "supervisor",
         route_to_agent,
@@ -93,7 +93,7 @@ def build_graph() -> StateGraph:
         },
     )
 
-    # ── Specialist → confidence check ──────────────────────
+    #  Specialist → confidence check 
     for agent in ["policy_agent", "claims_agent", "premium_agent"]:
         graph.add_conditional_edges(
             agent,
@@ -104,16 +104,16 @@ def build_graph() -> StateGraph:
             },
         )
 
-    # ── Re-route loop: increment → back to supervisor ──────
+    #  Re-route loop: increment → back to supervisor 
     graph.add_edge("increment_iteration", "supervisor")
 
-    # ── Quality gate → END ─────────────────────────────────
+    #  Quality gate → END 
     graph.add_edge("quality_gate", END)
 
     return graph.compile()
 
 
-# ── Compiled graph (singleton) ─────────────────────────────────────────────────
+#  Compiled graph (singleton) 
 _compiled_graph = None
 
 
@@ -124,7 +124,7 @@ def get_graph():
     return _compiled_graph
 
 
-# ── Public API ─────────────────────────────────────────────────────────────────
+#  Public API 
 
 def run_pipeline(
     query: str,
@@ -191,6 +191,6 @@ def run_pipeline(
 
     print(f"[Pipeline] Completed in {latency_ms}ms | intent={final_state.get('intent')} | "
           f"confidence={final_state.get('confidence', 0):.2f} | "
-          f"gate={'✅' if final_state.get('passed_quality_gate') else '❌'}")
+          f"gate={'' if final_state.get('passed_quality_gate') else ''}")
 
     return final_state
