@@ -1,0 +1,79 @@
+steps:
+  # ── Step 1: Run Unit Tests ─────────────────────────────────────────────────
+  - name: "python:3.11-slim"
+    id: "unit-tests"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        pip install -r requirements.txt
+        USE_MOCK_LLM=true USE_MOCK_BIGQUERY=true \
+        python -m pytest tests/ -v --cov=app --cov-report=term-missing \
+        --ignore=tests/test_evaluation.py -x
+
+  # ── Step 2: RAGAS Quality Gate Evaluation ─────────────────────────────────
+  - name: "python:3.11-slim"
+    id: "ragas-gate"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        pip install -r requirements.txt
+        USE_MOCK_LLM=true USE_MOCK_BIGQUERY=true \
+        python -m pytest tests/test_evaluation.py -v \
+        --tb=short
+    waitFor: ["unit-tests"]
+
+  # ── Step 3: Build Docker Image ─────────────────────────────────────────────
+  - name: "gcr.io/cloud-builders/docker"
+    id: "build-image"
+    args:
+      - "build"
+      - "-t"
+      - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/policyiq:${SHORT_SHA}"
+      - "-t"
+      - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/policyiq:latest"
+      - "--target"
+      - "production"
+      - "."
+    waitFor: ["ragas-gate"]
+
+  # ── Step 4: Push to Artifact Registry ─────────────────────────────────────
+  - name: "gcr.io/cloud-builders/docker"
+    id: "push-image"
+    args:
+      - "push"
+      - "--all-tags"
+      - "${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/policyiq"
+    waitFor: ["build-image"]
+
+  # ── Step 5: Deploy to Cloud Run ────────────────────────────────────────────
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    id: "deploy-cloudrun"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "policyiq"
+      - "--image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/policyiq:${SHORT_SHA}"
+      - "--region=${_REGION}"
+      - "--platform=managed"
+      - "--allow-unauthenticated"
+      - "--memory=2Gi"
+      - "--cpu=2"
+      - "--min-instances=1"
+      - "--max-instances=20"
+      - "--concurrency=80"
+      - "--set-env-vars=APP_ENV=production,GCP_PROJECT_ID=${PROJECT_ID},GCP_REGION=${_REGION}"
+      - "--set-secrets=GOOGLE_APPLICATION_CREDENTIALS=policyiq-sa-key:latest"
+    waitFor: ["push-image"]
+
+substitutions:
+  _REGION: "us-central1"
+  _REPO: "policyiq"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: "E2_HIGHCPU_8"
+
+timeout: "1200s"

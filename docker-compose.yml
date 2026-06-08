@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  policyiq:
+    build:
+      context: .
+      target: builder
+    image: policyiq-dev
+    container_name: policyiq-api
+    ports:
+      - "8080:8080"
+    environment:
+      - USE_MOCK_LLM=true
+      - USE_MOCK_BIGQUERY=true
+      - APP_ENV=development
+      - LOG_LEVEL=INFO
+      - GCP_PROJECT_ID=mock-project-id
+      - CONFIDENCE_THRESHOLD=0.75
+      - RAGAS_COMPOSITE_THRESHOLD=0.70
+    volumes:
+      - ./app:/app/app:ro
+    command: >
+      python -m uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8080
+      --reload
+      --log-level info
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
