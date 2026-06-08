@@ -1,0 +1,66 @@
+[
+  {
+    "id": "golden-001",
+    "category": "PolicyLookup",
+    "query": "What does my auto insurance policy POL-001 cover?",
+    "expected_intent": "PolicyLookup",
+    "ground_truth": "Policy POL-001 is an Auto Insurance policy for Alice Johnson covering a 2020 Toyota Camry with $100,000 coverage, $500 deductible, and $120/month premium. It covers collision, comprehensive, liability, uninsured motorist, and medical payments.",
+    "min_confidence": 0.75
+  },
+  {
+    "id": "golden-002",
+    "category": "PolicyLookup",
+    "query": "When does my policy POL-002 expire?",
+    "expected_intent": "PolicyLookup",
+    "ground_truth": "Policy POL-002 for Marcus Chen is a Home Insurance policy with an end date of June 1, 2025. The policy is currently active.",
+    "min_confidence": 0.70
+  },
+  {
+    "id": "golden-003",
+    "category": "ClaimsTriage",
+    "query": "What is the status of my claim CLM-2024-002?",
+    "expected_intent": "ClaimsTriage",
+    "ground_truth": "Claim CLM-2024-002 is currently Under Review. It is a Water Damage claim for $35,000 filed by Marcus Chen. Outstanding documents required: Contractor estimate, Photos, Plumber report. Adjuster: Linda Torres.",
+    "min_confidence": 0.80
+  },
+  {
+    "id": "golden-004",
+    "category": "ClaimsTriage",
+    "query": "I was in a car accident and need to file a claim",
+    "expected_intent": "ClaimsTriage",
+    "ground_truth": "To file a collision claim, I need your policy number and incident details. The claim will be triaged by severity with a 5-business-day SLA for medium severity claims. Required documents include a police report, photos of damage, and repair estimates.",
+    "min_confidence": 0.75
+  },
+  {
+    "id": "golden-005",
+    "category": "PremiumEstimation",
+    "query": "How much would car insurance cost for a 28-year-old driver?",
+    "expected_intent": "PremiumEstimation",
+    "ground_truth": "For a 28-year-old driver with a clean record, auto insurance typically costs between $67-$144/month depending on coverage level. Standard coverage is approximately $96/month. Factors include vehicle age, annual mileage, and driving record.",
+    "min_confidence": 0.75
+  },
+  {
+    "id": "golden-006",
+    "category": "PremiumEstimation",
+    "query": "Give me a home insurance quote for a $500,000 property",
+    "expected_intent": "PremiumEstimation",
+    "ground_truth": "For a $500,000 home with standard coverage, estimated monthly premium is approximately $208. Installing a security system can reduce premium by ~10%. Premium varies by property age, location, and coverage level.",
+    "min_confidence": 0.75
+  },
+  {
+    "id": "golden-007",
+    "category": "PolicyLookup",
+    "query": "Is water damage covered under my home policy?",
+    "expected_intent": "PolicyLookup",
+    "ground_truth": "Home insurance policies typically cover sudden and accidental water damage (e.g., burst pipes). Flood damage from external sources requires a separate flood insurance policy. Check your specific policy for deductible amounts.",
+    "min_confidence": 0.70
+  },
+  {
+    "id": "golden-008",
+    "category": "ClaimsTriage",
+    "query": "Show me claims history for policy POL-001",
+    "expected_intent": "ClaimsTriage",
+    "ground_truth": "Policy POL-001 has 1 claim on record: CLM-2024-001, an Approved collision claim for $8,500 (paid $8,000 after $500 deductible). Filed by Alice Johnson on March 12, 2024.",
+    "min_confidence": 0.80
+  }
+]
