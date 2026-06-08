@@ -1,0 +1,95 @@
+name: Deploy — Cloud Run Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        default: "production"
+        type: choice
+        options: [production, staging]
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_REGION: us-central1
+  IMAGE_REPO: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/policyiq/policyiq
+
+jobs:
+  deploy:
+    name: Build & Deploy to Cloud Run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --target production \
+            -t ${{ env.IMAGE_REPO }}:${{ github.sha }} \
+            -t ${{ env.IMAGE_REPO }}:latest \
+            .
+
+      - name: Push Docker image
+        run: docker push --all-tags ${{ env.IMAGE_REPO }}
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy policyiq \
+            --image=${{ env.IMAGE_REPO }}:${{ github.sha }} \
+            --region=${{ env.GCP_REGION }} \
+            --platform=managed \
+            --allow-unauthenticated \
+            --memory=2Gi \
+            --cpu=2 \
+            --min-instances=1 \
+            --max-instances=20 \
+            --concurrency=80 \
+            --timeout=60 \
+            --set-env-vars="APP_ENV=production,GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }},GCP_REGION=${{ env.GCP_REGION }},USE_MOCK_LLM=false,USE_MOCK_BIGQUERY=false" \
+            --set-secrets="GOOGLE_APPLICATION_CREDENTIALS=policyiq-sa-key:latest" \
+            --project=${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Get Cloud Run URL
+        id: get-url
+        run: |
+          URL=$(gcloud run services describe policyiq \
+            --region=${{ env.GCP_REGION }} \
+            --format='value(status.url)' \
+            --project=${{ secrets.GCP_PROJECT_ID }})
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "🚀 Deployed to: $URL"
+
+      - name: Smoke test production
+        run: |
+          sleep 10
+          curl -f ${{ steps.get-url.outputs.url }}/health
+          echo "✅ Production health check passed"
+
+      - name: Post deployment summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **URL** | ${{ steps.get-url.outputs.url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Image** | ${{ env.IMAGE_REPO }}:${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Region** | ${{ env.GCP_REGION }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Commit** | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
