@@ -1,0 +1,136 @@
+{
+  "displayName": "PolicyIQ Insurance Agent",
+  "defaultLanguageCode": "en",
+  "timeZone": "America/New_York",
+  "description": "Agentic insurance intelligence agent powered by LangGraph and Vertex AI. Handles policy lookup, claims triage, and premium estimation.",
+  "startFlow": "00000000-0000-0000-0000-000000000000",
+  "flows": [
+    {
+      "name": "Default Start Flow",
+      "displayName": "Default Start Flow",
+      "nluSettings": {
+        "modelType": "MODEL_TYPE_ADVANCED",
+        "classificationThreshold": 0.3
+      },
+      "pages": [
+        {
+          "displayName": "Start Page",
+          "entryFulfillment": {
+            "messages": [
+              {
+                "text": {
+                  "text": [
+                    "Welcome to PolicyIQ! I'm your intelligent insurance assistant. I can help you with:\n• Policy information and coverage details\n• Filing and checking claim status\n• Premium estimates and quotes\n\nHow can I assist you today?"
+                  ]
+                }
+              }
+            ]
+          },
+          "transitionRoutes": [
+            {
+              "intent": "PolicyLookup",
+              "triggerFulfillment": {
+                "webhook": "policyiq-webhook",
+                "tag": "policy_lookup"
+              }
+            },
+            {
+              "intent": "ClaimsTriage",
+              "triggerFulfillment": {
+                "webhook": "policyiq-webhook",
+                "tag": "claims_triage"
+              }
+            },
+            {
+              "intent": "PremiumEstimation",
+              "triggerFulfillment": {
+                "webhook": "policyiq-webhook",
+                "tag": "premium_estimation"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "intents": [
+    {
+      "displayName": "PolicyLookup",
+      "trainingPhrases": [
+        {"parts": [{"text": "What does my policy cover?"}]},
+        {"parts": [{"text": "Show me my policy details"}]},
+        {"parts": [{"text": "What is my deductible?"}]},
+        {"parts": [{"text": "When does my policy expire?"}]},
+        {"parts": [{"text": "Look up policy POL-001"}]},
+        {"parts": [{"text": "What are my coverage limits?"}]},
+        {"parts": [{"text": "Is flood damage covered under my policy?"}]},
+        {"parts": [{"text": "Tell me about my auto insurance"}]},
+        {"parts": [{"text": "How much coverage do I have?"}]},
+        {"parts": [{"text": "What is my policy renewal date?"}]}
+      ],
+      "parameters": [
+        {
+          "id": "policy_number",
+          "entityType": "@sys.any",
+          "displayName": "policy_number"
+        }
+      ]
+    },
+    {
+      "displayName": "ClaimsTriage",
+      "trainingPhrases": [
+        {"parts": [{"text": "I need to file a claim"}]},
+        {"parts": [{"text": "My car was in an accident"}]},
+        {"parts": [{"text": "Check my claim status"}]},
+        {"parts": [{"text": "What is the status of claim CLM-2024-001?"}]},
+        {"parts": [{"text": "I had a pipe burst in my home"}]},
+        {"parts": [{"text": "How do I submit a claim?"}]},
+        {"parts": [{"text": "My car was stolen"}]},
+        {"parts": [{"text": "There was water damage to my property"}]},
+        {"parts": [{"text": "Show me my claims history"}]},
+        {"parts": [{"text": "I was in a rear-end collision"}]}
+      ],
+      "parameters": [
+        {
+          "id": "claim_id",
+          "entityType": "@sys.any",
+          "displayName": "claim_id"
+        },
+        {
+          "id": "policy_number",
+          "entityType": "@sys.any",
+          "displayName": "policy_number"
+        }
+      ]
+    },
+    {
+      "displayName": "PremiumEstimation",
+      "trainingPhrases": [
+        {"parts": [{"text": "How much does car insurance cost?"}]},
+        {"parts": [{"text": "Give me a quote for home insurance"}]},
+        {"parts": [{"text": "What would my monthly premium be?"}]},
+        {"parts": [{"text": "Estimate my insurance cost"}]},
+        {"parts": [{"text": "How do I lower my premium?"}]},
+        {"parts": [{"text": "What's the price for comprehensive coverage?"}]},
+        {"parts": [{"text": "Can you calculate my insurance rates?"}]},
+        {"parts": [{"text": "I want a health insurance quote"}]},
+        {"parts": [{"text": "How much is insurance for a 2022 Honda Civic?"}]},
+        {"parts": [{"text": "What factors affect my premium?"}]}
+      ]
+    }
+  ],
+  "webhooks": [
+    {
+      "name": "policyiq-webhook",
+      "displayName": "PolicyIQ LangGraph Webhook",
+      "genericWebService": {
+        "uri": "https://policyiq-<hash>-uc.a.run.app/webhook",
+        "httpMethod": "POST",
+        "requestHeaders": {
+          "Content-Type": "application/json"
+        }
+      },
+      "timeout": "30s"
+    }
+  ]
+}
